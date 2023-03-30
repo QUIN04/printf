@@ -1,62 +1,120 @@
-0. I'm not going anywhere. You can print that wherever you want to. I'm here and I'm
- a Spur for life                                                                    
-Write a function that produces output according to a format.                        
-                                                                                    
-                                                                                    
-1. Education is when you read the fine print. Experience is what you get if you don'
-t                                                                                   
-Handle the following conversion specifiers:
+#ifndef MAIN_H
+#define MAIN_H
+#include <stdarg.h>
+#include <stdio.h>
+#include <unistd.h>
 
-2. With a face like mine, I do better in print                                      
-Handle the following custom conversion specifiers:                                  
-                                                                                    
-3. What one has not experienced, one will never understand in print                 
-Handle the following conversion specifiers:                                         
-                                                                                    
-4. Nothing in fine print is ever good news                                          
-Use a local buffer of 1024 chars in order to call write as little as possible.      
-                                                                                    
-5. My weakness is wearing too much leopard print                                    
-Handle the following custom conversion specifier:                                   
-                                                                                    
-6. How is the world ruled and led to war? Diplomats lie to journalists and believe t
-hese lies when they see them in print                                               
-Handle the following conversion specifier: p.                                       
-                                                                                    
-7. The big print gives and the small print takes away                               
-Handle the following flag characters for non-custom conversion specifiers:          
-                                                                                    
-8. Sarcasm is lost in print                                                         
-Handle the following length modifiers for non-custom conversion specifiers:         
-                                                                                    
-l                                                                                   
-h                                                                                   
-Conversion specifiers to handle: d, i, u, o, x, X                                   
-                                                                                    
-9. Print some money and give it to us for the rain forests                          
-Handle the field width for non-custom conversion specifiers.                        
-                                                                                    
-10. The negative is the equivalent of the composer's score, and the print the perfor
-mance                                                                               
-Handle the precision for non-custom conversion specifiers.                          
-                                                                                    
-11. It's depressing when you're still around and your albums are out of print       
-Handle the 0 flag character for non-custom conversion specifiers.                   
-                                                                                    
-12. Every time that I wanted to give up, if I saw an interesting textile, print what
- ever, suddenly I would see a collection                                            
-Handle the - flag character for non-custom conversion specifiers.                   
-                                                                                    
-13. Print is the sharpest and the strongest weapon of our party                     
-Handle the following custom conversion specifier:                                   
-                                                                                    
-14. The flood of print has turned reading into a process of gulping rather than savo
-ring                                                                                
-Handle the following custom conversion specifier:                                   
-                                                                                    
-15. *                                                                               
-All the above options work well together. 
+#define UNUSED(x) (void)(x)
+#define BUFF_SIZE 1024
 
+/* FLAGS */
+#define F_MINUS 1
+#define F_PLUS 2
+#define F_ZERO 4
+#define F_HASH 8
+#define F_SPACE 16
+
+/* SIZES */
+#define S_LONG 2
+#define S_SHORT 1
+
+/**
+ * struct fmt - Struct op
+ *
+ * @fmt: The format.
+ * @fn: The function associated.
+ */
+struct fmt
+{
+	char fmt;
+	int (*fn)(va_list, char[], int, int, int, int);
+};
+
+
+/**
+ * typedef struct fmt fmt_t - Struct op
+ *
+ * @fmt: The format.
+ * @fm_t: The function associated.
+ */
+typedef struct fmt fmt_t;
+
+int _printf(const char *format, ...);
+int handle_print(const char *fmt, int *i,
+va_list list, char buffer[], int flags, int width, int precision, int size);
+
+/****************** FUNCTIONS ******************/
+
+/* Funtions to print chars and strings */
+int print_char(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_string(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_percent(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+/* Functions to print numbers */
+int print_int(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_binary(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_unsigned(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_octal(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_hexadecimal(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_hexa_upper(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+int print_hexa(va_list types, char map_to[],
+char buffer[], int flags, char flag_ch, int width, int precision, int size);
+
+/* Function to print non printable characters */
+int print_non_printable(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+/* Funcion to print memory address */
+int print_pointer(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+/* Funciotns to handle other specifiers */
+int get_flags(const char *format, int *i);
+int get_width(const char *format, int *i, va_list list);
+int get_precision(const char *format, int *i, va_list list);
+int get_size(const char *format, int *i);
+
+/*Function to print string in reverse*/
+int print_reverse(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+/*Function to print a string in rot 13*/
+int print_rot13string(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+/* width handler */
+int handle_write_char(char c, char buffer[],
+	int flags, int width, int precision, int size);
+int write_number(int is_positive, int ind, char buffer[],
+	int flags, int width, int precision, int size);
+int write_num(int ind, char bff[], int flags, int width, int precision,
+	int length, char padd, char extra_c);
+int write_pointer(char buffer[], int ind, int length,
+	int width, int flags, char padd, char extra_c, int padd_start);
+
+int write_unsgnd(int is_negative, int ind,
+char buffer[],
+	int flags, int width, int precision, int size);
+
+/****************** UTILS ******************/
+int is_printable(char);
+int append_hexa_code(char, char[], int);
+int is_digit(char);
+
+long int convert_size_number(long int num, int size);
+long int convert_size_unsgnd(unsigned long int num, int size);
+
+#endif /* MAIN_H */
 
 
 
